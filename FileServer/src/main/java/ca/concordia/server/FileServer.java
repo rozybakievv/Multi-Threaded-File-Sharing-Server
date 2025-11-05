@@ -9,7 +9,7 @@ import java.net.Socket;
 
 public class FileServer {
 
-    private FileSystemManager fsManager;
+    private static FileSystemManager fsManager;
     private int port;
     public FileServer(int port, String fileSystemName, int totalSize){
         // Initialize the FileSystemManager
@@ -19,17 +19,41 @@ public class FileServer {
         this.port = port;
     }
 
-    public void start(){
+    public void start() {
         try (ServerSocket serverSocket = new ServerSocket(12345)) {
             System.out.println("Server started. Listening on port 12345...");
 
             while (true) {
                 Socket clientSocket = serverSocket.accept();
                 System.out.println("Handling client: " + clientSocket);
-                try (
-                        BufferedReader reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-                        PrintWriter writer = new PrintWriter(clientSocket.getOutputStream(), true)
-                ) {
+
+                // Create a new thread object
+                ClientHandler clientSock = new ClientHandler(clientSocket);
+
+                // Start thread client
+                new Thread(clientSock).start();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("Could not start server on port " + port);
+        }
+    }
+
+    // ClientHandler class
+    private static class ClientHandler implements Runnable {
+        private final Socket clientSocket;
+
+        // Constructor
+        public ClientHandler(Socket socket)
+        {
+            this.clientSocket = socket;
+        }
+
+        public void run() {
+            try (
+                BufferedReader reader = new BufferedReader(
+                        new InputStreamReader(clientSocket.getInputStream()));
+                PrintWriter writer = new PrintWriter(clientSocket.getOutputStream(), true)) {
                     String line;
                     while ((line = reader.readLine()) != null) {
                         System.out.println("Received from client: " + line);
@@ -60,11 +84,6 @@ public class FileServer {
                         // Ignore
                     }
                 }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.err.println("Could not start server on port " + port);
         }
     }
-
 }

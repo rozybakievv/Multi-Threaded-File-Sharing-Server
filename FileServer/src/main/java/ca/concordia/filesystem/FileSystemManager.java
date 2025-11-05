@@ -9,7 +9,7 @@ public class FileSystemManager {
 
     private final int MAXFILES = 5;
     private final int MAXBLOCKS = 10;
-    private final static FileSystemManager instance;
+    private static final FileSystemManager instance = null;
     private final RandomAccessFile disk;
     private final ReentrantLock globalLock = new ReentrantLock();
 
@@ -19,6 +19,7 @@ public class FileSystemManager {
     private boolean[] freeBlockList; // Bitmap for free blocks
 
     public FileSystemManager(String filename, int totalSize) {
+        this.disk = null;
         // Initialize the file system manager with a file
         if(instance == null) {
             //TODO Initialize the file system
