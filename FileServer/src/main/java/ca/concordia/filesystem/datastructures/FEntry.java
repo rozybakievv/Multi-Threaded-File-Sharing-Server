@@ -44,4 +44,7 @@ public class FEntry {
     public short getFirstBlock() {
         return firstBlock;
     }
+    public void setFirstBlock(short firstBlock) {
+        this.firstBlock = firstBlock;
+    }
 }
