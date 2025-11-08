@@ -2,6 +2,7 @@ package ca.concordia.server;
 import ca.concordia.filesystem.FileSystemManager;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
@@ -11,11 +12,11 @@ public class FileServer {
 
     private static FileSystemManager fsManager;
     private int port;
-    public FileServer(int port, String fileSystemName, int totalSize){
+    public FileServer(int port, String fileSystemName, int totalSize) throws IOException{
         // Initialize the FileSystemManager
         FileSystemManager fsManager = new FileSystemManager(fileSystemName,
                 10*128 );
-        this.fsManager = fsManager;
+        FileServer.fsManager = fsManager;
         this.port = port;
     }
 
@@ -28,7 +29,7 @@ public class FileServer {
                 System.out.println("Handling client: " + clientSocket);
 
                 // Create a new thread object
-                ClientHandler clientSock = new ClientHandler(clientSocket);
+                ClientThread clientSock = new ClientThread(clientSocket);
 
                 // Start thread client
                 new Thread(clientSock).start();
@@ -39,12 +40,12 @@ public class FileServer {
         }
     }
 
-    // ClientHandler class
-    private static class ClientHandler implements Runnable {
+    // ClientThread class
+    private static class ClientThread implements Runnable {
         private final Socket clientSocket;
 
         // Constructor
-        public ClientHandler(Socket socket)
+        public ClientThread(Socket socket)
         {
             this.clientSocket = socket;
         }
