@@ -5,4 +5,5 @@ In this project, you will be developing a file-sharing server. A file share serv
 
 
 This repository contains two projects: the client and the server. You only need to modify the server. 
-
+Guyass finished the create fuc
+Irfan did the read and write func
