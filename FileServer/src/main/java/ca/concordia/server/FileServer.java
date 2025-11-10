@@ -63,16 +63,49 @@ public class FileServer {
 
                         switch (command) {
                             case "CREATE":
-                                fsManager.createFile(parts[1]);
-                                writer.println("SUCCESS: File '" + parts[1] + "' created.");
+                                try {
+                                    fsManager.createFile(parts[1]);
+                                    writer.println("SUCCESS: File '" + parts[1] + "' created.");
+                                    writer.flush();
+                                } catch (Exception e) {
+                                    writer.println("ERROR: cannot create file.");
+                                    writer.flush();
+                                }
+                                break;
+                            
+                            case "DELETE":
+                                try {
+                                    fsManager.deleteFile(parts[1]);
+                                    writer.println("SUCCESS: File '" + parts[1] + "' deleted.");
+                                    writer.flush();
+                                } catch (Exception e) {
+                                    writer.println("ERROR: cannot delete file.");
+                                    writer.flush();
+                                }
+                                break;
+
+                            case "LIST":
+                                String[] list = fsManager.listFiles();
+                                if (list.length == 0) {
+                                    writer.println("No files exist.");
+                                } else {
+                                    for (int i = 0; i < list.length; i++) {
+                                        writer.println(list[i]);
+                                    }
+                                }
+                                // Indicate end of list for client side reader
+                                writer.println("END OF LIST");
                                 writer.flush();
                                 break;
-                            //TODO: Implement other commands READ, WRITE, DELETE, LIST
+
+                            //TODO: Implement other commands READ, WRITE, DELETE
                             case "QUIT":
                                 writer.println("SUCCESS: Disconnecting.");
+                                writer.flush();
                                 return;
                             default:
                                 writer.println("ERROR: Unknown command.");
+                                writer.flush();
                                 break;
                         }
                     }

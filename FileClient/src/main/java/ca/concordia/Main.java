@@ -27,11 +27,26 @@ public class Main {
             ) {
                 while (userInput != null && !userInput.isEmpty() && !userInput.equalsIgnoreCase("exit") && !userInput.equalsIgnoreCase("quit")) {
                     writer.println(userInput);
+                    writer.flush();
                     System.out.println("Message sent to the server: " + userInput);
-                    //get response
-                    String response = reader.readLine();
-                    System.out.println("Response from server: " + response);
 
+                    // Check command BEFORE reading response
+                    String command = userInput.trim().toUpperCase().split(" ")[0];
+                    
+                    if (command.equals("LIST")) {
+                        System.out.println("Response from server: ");
+                        String line;
+                        while ((line = reader.readLine()) != null) {
+                            if (line.equals("END OF LIST")) {
+                                break;
+                            }
+                            System.out.println(line);
+                        }
+                    } else {
+                        String response = reader.readLine();
+                        System.out.println("Response from server: " + response);
+                    }
+                
                     userInput = scanner.nextLine(); // Read next line
                 }
 

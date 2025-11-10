@@ -25,6 +25,13 @@ public class FileSystemManager {
         if(instance == null) {
             // Init disk file
             File diskFile = new File(filename);
+
+            // Delete existing file system to start from new
+            if (diskFile.exists()) {
+                diskFile.delete();
+                System.out.println("Deleted existing filesystem file");
+            }
+
             this.disk = new RandomAccessFile(diskFile, "rw");
 
             // Set disk size
@@ -58,7 +65,7 @@ public class FileSystemManager {
             // Check if fileName already exists
             for (int i = 0; i < inodeTable.length; i++) {
                 if (inodeTable[i] != null) {
-                    if (inodeTable[i].getFilename() == fileName) {
+                    if (inodeTable[i].getFilename().equals(fileName)) {
                         throw new UnsupportedOperationException("File already exists.");
                     }
                 }
@@ -71,7 +78,7 @@ public class FileSystemManager {
                     break;
                 }
             }
-            
+
             if (indexAvailableNode != -1) {
                 // Create FEntry at available node
                 inodeTable[indexAvailableNode] = new FEntry(fileName, (short) 0, (short) -1);
@@ -84,7 +91,8 @@ public class FileSystemManager {
             globalLock.unlock();
         }
     }
-public void writeFile(String filename, byte[] contents) throws Exception {
+    
+    /* public void writeFile(String filename, byte[] contents) throws Exception {
         globalLock.lock();
         try {
             int feIdx = findFEntryIndex(filename);
@@ -164,9 +172,9 @@ public void writeFile(String filename, byte[] contents) throws Exception {
         } finally {
             globalLock.unlock();
         }
-    }
+    } */
 
-    // Collect exactly `filesize` bytes following the FNode chain
+    /* // Collect exactly `filesize` bytes following the FNode chain
     public byte[] readFile(String filename) throws Exception {
         globalLock.lock();
         try {
@@ -179,11 +187,11 @@ public void writeFile(String filename, byte[] contents) throws Exception {
             if (total == 0 || fe.getFirstBlock() < 0) {
                 return new byte[0];
             }
-
+    
             byte[] out = new byte[total];
             int filled = 0;
             int node = fe.getFirstBlock();
-
+    
             while (node >= 0 && filled < total) {
                 int toRead = Math.min(BLOCKSIZE, total - filled);
                 disk.seek(blockOffset(node));
@@ -195,11 +203,60 @@ public void writeFile(String filename, byte[] contents) throws Exception {
         } finally {
             globalLock.unlock();
         }
+    } */
+   
+    public void deleteFile(String fileName) throws Exception {
+        globalLock.lock();
+
+        try {
+            // Look for file name and assign null
+            for (int i = 0; i < inodeTable.length; i++) {
+                if (inodeTable[i] != null) {
+                    if (inodeTable[i].getFilename().equals(fileName)) {
+                        inodeTable[i] = null;
+                        System.out.println("Deleted file: " + fileName);
+                        return;
+                    }
+                }
+            }
+            
+            throw new UnsupportedOperationException("File does not exist.");
+        } finally {
+            globalLock.unlock();
+        }
+    }
+
+    public String[] listFiles() {
+        // Count number of existing files
+        int count = 0;
+        for (int i = 0; i < inodeTable.length; i++) {
+            if (inodeTable[i] != null) {
+                count++;
+            }
+        }
+
+        String[] list = new String[count];
+
+        // Return list of file names
+        if (count == 0) {
+            return list;
+        } else {
+            int listIndex = 0;
+
+            for (int i = 0; i < inodeTable.length; i++) {
+                if (inodeTable[i] != null) {
+                    list[listIndex] = inodeTable[i].getFilename();
+                    listIndex++;
+                }
+            }
+    
+            return list;
+        }
     }
 
     // ---------------- helpers (used by CREATE/READ/WRITE) ----------------
 
-    private int findFEntryIndex(String name) {
+    /* private int findFEntryIndex(String name) {
         for (int i = 0; i < MAXFILES; i++) {
             if (!fentries[i].isEmpty() && fentries[i].getFilename().equals(name)) return i;
         }
@@ -214,7 +271,7 @@ public void writeFile(String filename, byte[] contents) throws Exception {
     }
 
     /** Free a whole chain: zero each block, mark node free, unlink. */
-    private void freeChain(short head) throws IOException {
+    /* private void freeChain(short head) throws IOException {
         int node = head;
         while (node >= 0) {
             int next = fnodes[node].getNext();
@@ -222,9 +279,5 @@ public void writeFile(String filename, byte[] contents) throws Exception {
             fnodes[node].setBlockIndex(-1);
             fnodes[node].setNext(-1);
             node = next;
-        }
-    }
+     } */
 }
-
-    // TODO: Add readFile, writeFile and other required methods,
-
