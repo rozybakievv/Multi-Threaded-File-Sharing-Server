@@ -73,6 +73,14 @@ public class FileServer {
                                 }
                                 break;
                             
+                            case "WRITE":
+                                try {
+                                    fsManager.writeFile(command, parts);
+                                } catch (Exception e) {
+                                    // TODO: handle exception
+                                }
+                                break;
+                            
                             case "DELETE":
                                 try {
                                     fsManager.deleteFile(parts[1]);
