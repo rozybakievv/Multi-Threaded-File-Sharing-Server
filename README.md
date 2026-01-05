@@ -1,9 +1,21 @@
 [![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/wZsoNm5d)
-# File Sharing System 
+# Multi-Threaded File Sharing Server & File System Simulator
+Project to simulate a multi-threaded file sharing server in Java in a single file.
 
-In this project, you will be developing a file-sharing server. A file share server is a computer or server that enables multiple users on a network to access and share files and folders in a central location. It allows users to access files on various devices. You will create a server file system simulator to store all the files created by clients. 
+## Features
 
+- Custom file system simulator stored in a single file
 
-This repository contains two projects: the client and the server. You only need to modify the server. 
-Guyass finished the create fuc
-Irfan did the read and write func
+- File operations: CREATE, READ, WRITE, DELETE, LIST
+
+- Fixed-size block allocation with linked file nodes
+
+- Multi-client server using Java sockets and multithreading
+
+- Reader–writer synchronization to allow concurrent reads and exclusive writes
+
+- Error handling to prevent file system corruption
+
+- Designed to scale to hundreds of simultaneous client connections
+
+Key operating system concepts: file allocation, metadata management, concurrency control, synchronization, and deadlock prevention.
